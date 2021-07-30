@@ -2,19 +2,16 @@ import pandas as pd
 import re
 
 data = pd.read_csv("../data/NYPL-menus.csv")
-
 # print(data.head())
 
 '''Select a subset of the data for cleaning with Python'''
 subset = data[['event', 'venue', 'place', 'date']]
-
 # print(subset.head())
 
 '''Destructure DataFrame to return individual column Series to pass to functions'''
 (event, venue, place, date) = subset['event'], subset['venue'], subset['place'], subset['date']
 
 '''Functions to operate on each column and return cleaned data'''
-
 def clean_event(event):
     # Work on this to remove all quotes
     event = event.str.replace('"', '', regex=True)
@@ -71,10 +68,12 @@ def clean_place(place):
 
 def clean_date(date):
     
-    date = pd.Series([d for d in date if d != '190-03-06' or d != '1091-01-27' or d != '2928-03-26'])
+    # Use a list comprehension to filter bad values and create a new Pandas Series
+    date = pd.Series([d for d in date if d != '0190-03-06' and d != '1091-01-27' and d != '2928-03-26'])
     
     return date.to_csv("../data/test_date.csv")
 
+'''Merge Pandas Series to DataFrame and output as CSV'''
 def merge_series_to_df(event, venue, place, date):
 
     all_series = {"event": event, "venue": venue, "place": place, "date": date}
@@ -83,16 +82,18 @@ def merge_series_to_df(event, venue, place, date):
 
     return df.to_csv("../data/cleaned-NYPL-menus.csv")
 
+
 def main():
-    # clean_event(event)
 
-    # clean_venue(venue)
+    clean_event(event)
 
-    # clean_place(place)
+    clean_venue(venue)
+
+    clean_place(place)
 
     clean_date(date)
 
-    # merge_series_to_df(event, venue, place, date)
+    merge_series_to_df(event, venue, place, date)
 
 
 if __name__ == "__main__":
