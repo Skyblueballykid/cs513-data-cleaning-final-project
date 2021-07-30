@@ -33,8 +33,11 @@ def clean_event(event):
 
     # Match semicolons in the middle of a string and replace with :
     pattern3 = '\\b;'
-    event = event.str.replace(pattern3, ':', regex=True)
-    return event.to_csv("../data/test_event.csv")
+    cleaned_event = event.str.replace(pattern3, ':', regex=True)
+
+    cleaned_event.to_csv("../data/test_event.csv")
+
+    return cleaned_event
 
 def clean_venue(venue):
     venue = venue.str.replace(';', '')
@@ -44,9 +47,11 @@ def clean_venue(venue):
     venue = venue.str.replace('[', '', regex=True)
     venue = venue.str.replace(']', '', regex=True)
 
-    venue = venue.str.replace('\(\)', '', regex=True)
+    cleaned_venue = venue.str.replace('\(\)', '', regex=True)
 
-    return venue.to_csv("../data/test_venue.csv")
+    cleaned_venue.to_csv("../data/test_venue.csv")
+
+    return cleaned_venue
 
 def clean_place(place):
     place = place.str.replace('"', '', regex=True)
@@ -62,21 +67,26 @@ def clean_place(place):
     place = place.str.replace(']', '', regex=True)
 
     place = place.str.replace('\(', '', regex=True)
-    place = place.str.replace('\)', '', regex=True)
+    cleaned_place = place.str.replace('\)', '', regex=True)
 
-    return place.to_csv("../data/test_place.csv")
+    cleaned_place.to_csv("../data/test_place.csv")
+
+    return cleaned_place
 
 def clean_date(date):
     
     # Use a list comprehension to filter bad values and create a new Pandas Series
-    date = pd.Series([d for d in date if d != '0190-03-06' and d != '1091-01-27' and d != '2928-03-26'])
+    cleaned_date = pd.Series([d for d in date if d != '0190-03-06' and d != '1091-01-27' and d != '2928-03-26'])
     
-    return date.to_csv("../data/test_date.csv")
+    cleaned_date.to_csv("../data/test_date.csv")
+
+    return cleaned_date
+
 
 '''Merge Pandas Series to DataFrame and output as CSV'''
-def merge_series_to_df(event, venue, place, date):
+def merge_series_to_df(cleaned_event, cleaned_venue, cleaned_place, cleaned_date):
 
-    all_series = {"event": event, "venue": venue, "place": place, "date": date}
+    all_series = {"cleaned_event": cleaned_event, "cleaned_venue": cleaned_venue, "cleaned_place": cleaned_place, "cleaned_date": cleaned_date}
     
     df = pd.concat(all_series, axis=1)
 
@@ -85,16 +95,12 @@ def merge_series_to_df(event, venue, place, date):
 
 def main():
 
-    clean_event(event)
+    cleaned_event = clean_event(event)
+    cleaned_venue = clean_venue(venue)
+    cleaned_place = clean_place(place)
+    cleaned_date = clean_date(date)
 
-    clean_venue(venue)
-
-    clean_place(place)
-
-    clean_date(date)
-
-    merge_series_to_df(event, venue, place, date)
-
+    merge_series_to_df(cleaned_event, cleaned_venue, cleaned_place, cleaned_date)
 
 if __name__ == "__main__":
     main()
